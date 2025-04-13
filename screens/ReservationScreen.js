@@ -26,10 +26,25 @@ const ReservationScreen = () => {
     };
 
     const handleReservation = () => {
-        console.log('campers:', campers);
-        console.log('hikeIn:', hikeIn);
-        console.log('date:', date);
-        setShowModal(!showModal);
+        if (!campers || campers < 1) {
+            alert('Please select a valid number of campers.');
+            return;
+        }
+    
+        if (!date || isNaN(date.getTime())) {
+            alert('Please select a valid date.');
+            return;
+        }
+    
+        try {
+            console.log('campers:', campers);
+            console.log('hikeIn:', hikeIn);
+            console.log('date:', date);
+            setShowModal(!showModal);
+        } catch (error) {
+            console.error('Error handling reservation:', error);
+            alert('An error occurred while processing your reservation. Please try again.');
+        }
     };
 
     const resetForm = () => {
