@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import RenderCampsite from '../features/campsites/RenderCampsite';
 import { toggleFavorite } from '../features/favorites/favoritesSlice';
 import { useState } from 'react';
-import { Form, Rating, Input } from 'react-native-elements';
+import { Rating, Input } from 'react-native-elements';
+import { postComment } from '../features/comments/commentsSlice';
 
 const CampsiteInfoScreen = ({ route }) => {
     const { campsite } = route.params;
@@ -16,16 +17,27 @@ const CampsiteInfoScreen = ({ route }) => {
     const [text, setText] = useState('');
 
     handleSubmit = () => {
+        if (!author.trim() || !text.trim()) {
+            alert('Please fill out all fields before submitting.');
+            return;
+        }
+
         const newComment = {
             author,
             rating,
             text,
             campsiteId: campsite.id
         };
-        console.log(newComment);
-        setShowModal(!showModal);
-    };
 
+        try {
+            dispatch(postComment(newComment));
+            setShowModal(!showModal);
+            resetForm();
+        } catch (error) {
+            console.error('Failed to post comment:', error);
+            alert('An error occurred while submitting your comment. Please try again.');
+        }
+    };
     const resetForm = () => {
         setRating(5);
         setAuthor('');
@@ -37,7 +49,7 @@ const CampsiteInfoScreen = ({ route }) => {
         return (
             <View style={styles.commentItem}>
                 <Text style={{ fontSize: 14 }}>{item.text}</Text>
-                <Rating 
+                <Rating
                     readonly
                     startingValue={item.rating}
                     imageSize={10}
