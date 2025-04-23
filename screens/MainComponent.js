@@ -22,6 +22,7 @@ import { fetchPromotions } from "../features/promotions/promotionsSlice";
 import { fetchComments } from "../features/comments/commentsSlice";
 import FavoritesScreen from "./FavoritesScreen";
 import LoginScreen from "./LoginScreen";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/core";
 
 const Drawer = createDrawerNavigator();
 
@@ -152,17 +153,22 @@ const LoginNavigator = () => {
   return (
     <Stack.Navigator screenOptions={screenOptions}>
       <Stack.Screen
-        name='Login'
+        name="Login"
         component={LoginScreen}
-        options={({ navigation }) => ({
+        options={({ navigation, route }) => ({
+          headerTitle: getFocusedRouteNameFromRoute(route),
           headerLeft: () => (
             <Icon
-              name='sign-in'
-              type='font-awesome'
+              name={
+                getFocusedRouteNameFromRoute(route) === "Register"
+                  ? "user-plus"
+                  : "sign-in"
+              }
+              type="font-awesome"
               iconStyle={styles.stackIcon}
               onPress={() => navigation.toggleDrawer()}
             />
-          )
+          ),
         })}
       />
     </Stack.Navigator>
@@ -230,7 +236,6 @@ const Main = () => {
         paddingTop: Platform.OS === "ios" ? 0 : Constants.statusBarHeight,
       }}
     >
-
       <Drawer.Navigator
         initialRouteName="HomeNav"
         drawerContent={CustomDrawerContent}
@@ -240,19 +245,19 @@ const Main = () => {
         }}
       >
         <Drawer.Screen
-          name='Login'
+          name="Login"
           component={LoginNavigator}
           options={{
             headerShown: false,
             drawerIcon: ({ color }) => (
               <Icon
-                name='sign-in'
-                type='font-awesome'
+                name="sign-in"
+                type="font-awesome"
                 size={24}
                 iconStyle={{ width: 24 }}
                 color={color}
               />
-            )
+            ),
           }}
         />
         <Drawer.Screen
